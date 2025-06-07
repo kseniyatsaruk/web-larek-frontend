@@ -57,70 +57,131 @@ yarn build
 ## EventEmitter
   Класс для управления событиями — «Брокер событий».
   Методы:
-  - `on` - устанавливает обработчик на событие
-  - `off` - снимает обработчик с события
-  - `emit` - инициирует событие с данными
-  - `onAll` - слушает все события
-  - `offAll` - сбрасывает все обработчики
-  - `trigger` - делает коллбек триггер, генерирующий событие при вызове
+  - `on(eventName: EventName, callback: (event: T) => void)` - устанавливает обработчик на событие
+  - `off(eventName: EventName, callback: Subscriber)` - снимает обработчик с события
+  - `emit(eventName: string, data?: T)` - инициирует событие с данными
+  - `onAll(callback: (event: EmitterEvent) => void)` - слушает все события
+  - `offAll()` - сбрасывает все обработчики
+  - `trigger(eventName: string, context?: Partial<T>)` - делает коллбек триггер, генерирующий событие при вызове
 
 ## ApiModel
-  Класс-обёртка API.
+  Класс-обёртка над API.
+  Конструктор: 
+  - `cdnUrl: string`
+  - `baseUrl: string`
+  - `options?: RequestInit`
   Методы:
-  - `getProductCards` - получает список товаров
-  - `postOrderLot` - отправляет заказ
+  - `getProductCards(): Promise<IProduct[]>` - получает список товаров
+  - `postOrderLot(order: IOrderData): Promise<IOrderData>` - отправляет заказ
 
 ## BasketModel
   Отвечает за: хранение товаров в корзине, расчёт суммы, счётчик, очистку корзины.
   Методы:
-  - `getCount` - количество товаров
-  - `getSumProducts` - сумма синапсов всех товаров в корзине
-  - `setSelectedСard` - добавляет товар в корзину
-  - `deleteSelectedCard` - удаляет товар из корзины
-  - `clearBasket` - очищает корзину
+  - `getCount()` - количество товаров
+  - `getSumProducts()` - сумма синапсов всех товаров в корзине
+  - `setSelectedСard(product: IProduct)` - добавляет товар в корзину
+  - `deleteSelectedCard(product: IProduct)` - удаляет товар из корзины
+  - `clearBasket()` - очищает корзину
 
 ## DataModel
   Хранит данные с сервера.
-  `productCards` — массив всех товаров
-  `selectedCard` — выбранная карточка
+  Конструктор: 
+  - `events: IEvents`
+  Хранит:
+  `productCards: IProduct[]` — массив всех товаров
+  `selectedCard: IProduct` — выбранная карточка
   Методы:
-  - `setPreview` - данные открытой карточки
+  - `setPreview(item: IProduct)` - данные открытой карточки
 
 ## FormModel
   Хранит и валидирует данные от пользователя.
+  Конструктор: 
+  - `events: IEvents`
   Методы:
-  - `setOrderDelivery` - принимаем данные доставки
-  - `setOrderContacts` - принимаем контактные данные
-  - `validateDelivery` - проверяет данные доставки
-  - `validateContacts` - проверяет контактные данные
-  - `getOrder` - возвращает объект данных и выбранных товаров.
+  - `setOrderDelivery(field: string,, value: string)` - принимаем данные доставки
+  - `setOrderContacts(field: string,, value: string)` - принимаем контактные данные
+  - `validateDelivery(): boolean` - проверяет данные доставки
+  - `validateContacts(): boolean` - проверяет контактные данные
+  - `getOrder(): IOrderData` - возвращает объект данных и выбранных товаров.
 
 ## CatalogCardView
   Отображение карточек товаров в каталоге.
+  Конструктор: 
+  - `template: HTMLTemplateElement`
+  - `events: IEvents`
+  - `actions: IActions`
+  Методы: 
+  - `render(product: IProduct)`
 
 ## ProductPreviewView
   Отображение товара в модальном окне.
   Обрабатывает добавление товара в корзину.
+  Конструктор: 
+  - `template: HTMLTemplateElement`
+  - `events: IEvents`
+  - `actions: IActions`
+  Методы: 
+  - `render(product: IProduct)`
+  - `updateButton(product: IProduct)` - обновление состояния кнопки «В корзину»
 
 ## ModalView
   Работа модального окна.
   Умеет открывать/закрывать. Блокирует скролл страницы. Закрывается по кнопке или клику вне окна.
+  Конструктор: 
+  - `modalContainer: HTMLElement`
+  - `events: IEvents`
+  Методы: 
+  - `render()`
+  - `open()` - открыть
+  - `close()` - закрыть
+  - `locked(value: boolean)`
 
 ## BasketView
   Основной компонент корзины.
   Показывает список товаров. Общую сумму. Кнопку «Оформить».
+  Конструктор: 
+  - `modalContainer: HTMLElement`
+  - `events: IEvents`
+  Методы: 
+  - `render()`
+  - `renderBasketCounter(count: number)` - количество товаров
+  - `renderSumProducts(sum: number)` - общая сумму
 
 ## BasketItemView
   Отображает один товар в корзине с кнопкой удаления.
+  Конструктор: 
+  - `modalContainer: HTMLElement`
+  - `events: IEvents`
+  - `actions: IActions`
+  Методы: 
+  - `render(product: IProduct, index: number)`
 
 ## ContactsFormView
   Форма для ввода контактных данных.
+  Конструктор: 
+  - `modalContainer: HTMLElement`
+  - `events: IEvents`
+  Методы: 
+  - `render()`
+  - `valid(value: boolean)` — флаг активности кнопки
 
 ## OrderFormView
   Форма для ввода данных доставки.
+  Конструктор: 
+  - `modalContainer: HTMLElement`
+  - `events: IEvents`
+  Методы: 
+  - `render()`
+  - `valid(value: boolean)` — флаг активности кнопки
+
 
 ## OrderSuccessView
   Рендерит экран «Заказ оформлен» с суммой.
+  Конструктор: 
+  - `modalContainer: HTMLElement`
+  - `events: IEvents`
+  Методы: 
+  - `render(sum: number)`
 
 # Взаимодействие компонентов
   1. Модели управляют данными и логикой приложения.
