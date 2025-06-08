@@ -64,7 +64,7 @@ yarn build
   - `offAll()` - сбрасывает все обработчики
   - `trigger(eventName: string, context?: Partial<T>)` - делает коллбек триггер, генерирующий событие при вызове
 
-## ApiModel
+## ApiService
   Класс-обёртка над API.
   Конструктор: 
   - `cdnUrl: string`
