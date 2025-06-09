@@ -64,6 +64,16 @@ yarn build
   - `offAll()` - сбрасывает все обработчики
   - `trigger(eventName: string, context?: Partial<T>)` - делает коллбек триггер, генерирующий событие при вызове
 
+## Api
+  Базовый класс для отправки HTTP-запросов к серверу.
+  Конструктор:
+  - `baseUrl: string` - базовый URL, к которому будут добавляться пути uri при выполнении запросов
+  - `options: RequestInit` - глобальные опции запроса.
+  Методы:
+  - `get(uri: string)` - выполняет GET-запрос по адресу baseUrl + uri
+  - `post(uri: string, data: object, method: ApiPostMethods = 'POST')` - выполняет POST/PUT/DELETE-запрос с телом data. Метод по умолчанию — POST
+  - `handleResponse(response: Response): Promise<object>` - обрабатывает ответ сервера
+
 ## ApiService
   Класс-обёртка над API.
   Конструктор: 
