@@ -21,7 +21,6 @@ export class ModalView implements IModalView {
     this.closeButton.addEventListener('click', this.close.bind(this));
     this.modalContainer.addEventListener('click', this.close.bind(this));
     this.modalContainer.querySelector('.modal__container').addEventListener('click', event => event.stopPropagation());
-    document.addEventListener('keydown', this.handleEscape);
   }
 
   private handleEscape = (event: KeyboardEvent) => {
@@ -40,11 +39,13 @@ export class ModalView implements IModalView {
 
   open() {
     this.modalContainer.classList.add('modal_active');
+    document.addEventListener('keydown', this.handleEscape);
     this.events.emit('modal:open');
   }
 
   close() {
     this.modalContainer.classList.remove('modal_active');
+    document.removeEventListener('keydown', this.handleEscape);
     this.content = null;
     this.events.emit('modal:close');
   }

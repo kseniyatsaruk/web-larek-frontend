@@ -16,6 +16,7 @@ import { FormModel } from './components/models/FormModel';
 import { OrderFormView } from './components/views/OrderFormView';
 import { ContactsFormView } from './components/views/ContactsFormView';
 import { OrderSuccessView } from './components/views/OrderSuccessView';
+import { PageView } from './components/views/PageView';
 
 const cardCatalogTemplate = document.querySelector('#card-catalog') as HTMLTemplateElement;
 const cardPreviewTemplate = document.querySelector('#card-preview') as HTMLTemplateElement;
@@ -27,6 +28,7 @@ const successTemplate = document.querySelector('#success') as HTMLTemplateElemen
 
 const api = new ApiService(CDN_URL, API_URL);
 const events = new EventEmitter();
+const page = new PageView();
 const dataModel = new DataModel(events);
 const modal = new ModalView(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new BasketView(basketTemplate, events);
@@ -36,12 +38,12 @@ const order = new OrderFormView(orderTemplate, events);
 const contacts = new ContactsFormView(contactsTemplate, events);
 
 function renderCards() {
-  const gallery = ensureElement<HTMLElement>('.gallery');
-  gallery.innerHTML = '';
-
+  page.clearGallery();
   dataModel.productCards.forEach(item => {
-    const card = new CatalogCardView(cardCatalogTemplate, events, { onClick: () => events.emit('card:select', item) });
-    gallery.append(card.render(item));
+    const card = new CatalogCardView(cardCatalogTemplate, events, {
+      onClick: () => events.emit('card:select', item)
+    });
+    page.appendToGallery(card.render(item));
   });
 }
 
@@ -107,7 +109,7 @@ events.on('order:changePayment', (button: HTMLButtonElement) => {
   formModel.payment = button.name;
 });
 
-events.on(`order:changeAddress`, (data: { field: string, value: string }) => {
+events.on('order:changeAddress', (data: { field: string, value: string }) => {
   formModel.setOrderDelivery(data.field, data.value);
 });
 
@@ -123,7 +125,7 @@ events.on('contacts:open', () => {
   modal.render();
 });
 
-events.on(`contacts:change`, (data: { field: string, value: string }) => {
+events.on('contacts:change', (data: { field: string, value: string }) => {
   formModel.setOrderContacts(data.field, data.value);
 });
 
@@ -142,7 +144,7 @@ events.on('success:open', () => {
       basket.renderBasketCounter(basketModel.getCount());
       modal.render();
     })
-    .catch(error => console.log(error));
+    .catch(console.error);
 });
 
 events.on('success:close', () => modal.close());
@@ -159,4 +161,4 @@ api.getProductCards()
   .then(function (data: IProduct[]) {
     dataModel.productCards = data;
   })
-  .catch(error => console.log(error))
+  .catch(console.error);

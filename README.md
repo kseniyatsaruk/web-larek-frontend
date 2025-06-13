@@ -114,6 +114,14 @@ yarn build
   - `validateContacts(): boolean` - проверяет контактные данные
   - `getOrder(): IOrderData` - возвращает объект данных и выбранных товаров.
 
+## PageView
+  Отображает галерею товаров на главной странице.
+  Конструктор: 
+  - без параметров (автоматически ищет .gallery в DOM)
+  Методы: 
+  - `appendToGallery(element: HTMLElement)` - добавляет карточку товара в галерею
+  - `clearGallery() ` - очищает контейнер галереи от всех товаров
+
 ## CatalogCardView
   Отображение карточек товаров в каталоге.
   Конструктор: 
@@ -150,7 +158,7 @@ yarn build
   Основной компонент корзины.
   Показывает список товаров. Общую сумму. Кнопку «Оформить».
   Конструктор: 
-  - `modalContainer: HTMLElement`
+  - `template: HTMLTemplateElement`
   - `events: IEvents`
   Методы: 
   - `render()`
@@ -160,35 +168,46 @@ yarn build
 ## BasketItemView
   Отображает один товар в корзине с кнопкой удаления.
   Конструктор: 
-  - `modalContainer: HTMLElement`
+  - `template: HTMLTemplateElement`
   - `events: IEvents`
   - `actions: IActions`
   Методы: 
   - `render(product: IProduct, index: number)`
 
-## ContactsFormView
-  Форма для ввода контактных данных.
-  Конструктор: 
-  - `modalContainer: HTMLElement`
+## FormView
+  Базовый класс для форм. Содержит общую логику для всех форм.
+  Конструктор:
+  - `template: HTMLTemplateElement`
   - `events: IEvents`
-  Методы: 
+  Методы:
+  - `onSubmit(event: Event): void` — метод для отправки (реализуется в наследниках)
+  - `valid(value: boolean)` — флаг активности кнопки отправки формы
+  - `render(): HTMLElement`
+
+## ContactsFormView
+  Форма для ввода контактных данных. Наследует FormView.
+  Конструктор: 
+  - `template: HTMLTemplateElement`
+  - `events: IEvents`
+  Наследуемые методы:
   - `render()`
   - `valid(value: boolean)` — флаг активности кнопки
+  - `onSubmit(event: Event)` — генерирует событие
 
 ## OrderFormView
-  Форма для ввода данных доставки.
+  Форма для ввода данных доставки. Наследует FormView.
   Конструктор: 
-  - `modalContainer: HTMLElement`
+  - `template: HTMLTemplateElement`
   - `events: IEvents`
-  Методы: 
+  Наследуемые методы: 
   - `render()`
   - `valid(value: boolean)` — флаг активности кнопки
-
+  - `onSubmit(event: Event)` — генерирует событие
 
 ## OrderSuccessView
   Рендерит экран «Заказ оформлен» с суммой.
   Конструктор: 
-  - `modalContainer: HTMLElement`
+  - `template: HTMLTemplateElement`
   - `events: IEvents`
   Методы: 
   - `render(sum: number)`

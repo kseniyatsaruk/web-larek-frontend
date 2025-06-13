@@ -1,57 +1,37 @@
 import { IEvents } from "../base/events";
+import { FormView } from "./FormView";
 
-export interface IOrderFormView {
-  order: HTMLFormElement;
-  buttonAll: HTMLButtonElement[];
-  paymentSelection: String;
-  formErrors: HTMLElement;
-  render(): HTMLElement;
-}
+export class OrderFormView extends FormView {
+  buttonsPayment: HTMLButtonElement[];
 
-export class OrderFormView implements IOrderFormView {
-  order: HTMLFormElement;
-  buttonAll: HTMLButtonElement[];
-  buttonSubmit: HTMLButtonElement;
-  formErrors: HTMLElement;
+  constructor(template: HTMLTemplateElement, events: IEvents) {
+    super(template, events);
+    this.buttonsPayment = Array.from(this.form.querySelectorAll('.button_alt'));
 
-  constructor(template: HTMLTemplateElement, protected events: IEvents) {
-    this.order = template.content.querySelector('.form').cloneNode(true) as HTMLFormElement;
-    this.buttonAll = Array.from(this.order.querySelectorAll('.button_alt'));
-    this.buttonSubmit = this.order.querySelector('.order__button');
-    this.formErrors = this.order.querySelector('.form__errors');
-
-    this.buttonAll.forEach(button => {
+    this.buttonsPayment.forEach(button => {
       button.addEventListener('click', () => {
         this.paymentSelection = button.name;
         this.events.emit('order:changePayment', button);
       });
     });
 
-    this.order.addEventListener('input', (event: Event) => {
+    this.form.addEventListener('input', (event: Event) => {
       const target = event.target as HTMLInputElement;
-      this.events.emit(`order:changeAddress`, {
+      this.events.emit('order:changeAddress', {
         field: target.name,
-        value: target.value,
+        value: target.value
       });
     });
+  }
 
-    this.order.addEventListener('submit', (event: Event) => {
-      event.preventDefault();
-      this.events.emit('contacts:open');
+  set paymentSelection(method: string) {
+    this.buttonsPayment.forEach(button => {
+      button.classList.toggle('button_alt-active', button.name === method);
     });
   }
 
-  set paymentSelection(paymentMethod: string) {
-    this.buttonAll.forEach(button => {
-      button.classList.toggle('button_alt-active', button.name === paymentMethod);
-    })
-  }
-
-  set valid(value: boolean) {
-    this.buttonSubmit.disabled = !value;
-  }
-
-  render() {
-    return this.order;
+  onSubmit(event: Event): void {
+    event.preventDefault();
+    this.events.emit('contacts:open');
   }
 }
